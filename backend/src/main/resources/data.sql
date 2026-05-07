@@ -103,3 +103,11 @@ INSERT INTO producto (codigo, nombre, categoria, ubicacion, stock) VALUES
 INSERT INTO cuenta_bancaria (nombre_banco, numero_cuenta, tipo_cuenta, saldo, moneda, fecha_apertura, titular) VALUES
 ('BCP', '001-456789123', 'CORRIENTE', 80000, 'CLP', '2024-01-15', 'Empresa Vitivinícola'),
 ('BBVA', '002-987654321', 'AHORRO', 44500, 'CLP', '2024-02-20', 'Empresa Vitivinícola');
+
+INSERT INTO usuario (usuario, password, rol) VALUES
+('admin', 'admin123', 'admin'),
+('dueno', 'dueno123', 'dueno');
+
+INSERT INTO movimiento_caja (tipo, cuenta, monto, fecha, motivo) VALUES
+('Depósito', 'Caja Principal', 1200.00, '2026-05-02', 'Venta de productos'),
+('Retiro', 'Cuenta Corriente', 350.00, '2026-05-02', 'Pago de proveedor');

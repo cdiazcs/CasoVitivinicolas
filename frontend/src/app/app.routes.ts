@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { LoginComponent } from './pages/auth/login/login';
 import { Dashboard } from './pages/dashboard/dashboard';
-import { Caja } from './pages/caja/caja';
+import { CajaComponent } from './pages/caja/caja';
 import { Cuentas } from './pages/cuentas-bancarias/cuentas-bancarias';
 import { Almacen } from './pages/almacen/almacen';
 import { GuiasAlmacen } from './pages/guias-almacen/guias-almacen';
@@ -13,7 +13,7 @@ export const routes: Routes = [
 
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: Dashboard },
-  { path: 'caja', component: Caja },
+  { path: 'caja', component: CajaComponent },
   { path: 'cuentas-bancarias', component: Cuentas },
   { path: 'almacen', component: Almacen },
   { path: 'guias-almacen', component: GuiasAlmacen },

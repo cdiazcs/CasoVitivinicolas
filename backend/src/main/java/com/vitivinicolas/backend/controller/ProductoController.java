@@ -19,6 +19,14 @@ public class ProductoController {
     public List<Producto> listarTodos() {
         return repo.findAll();
     }
+    @GetMapping("/produccion-actual")
+public int obtenerProduccionActual() {
+
+    return repo.findAll()
+            .stream()
+            .mapToInt(producto -> producto.getStock())
+            .sum();
+}
 
     @GetMapping("/filtrar")
     public List<Producto> filtrar(

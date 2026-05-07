@@ -1,6 +1,8 @@
+
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Auth } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +15,10 @@ export class LoginComponent {
   password = '';
   rol = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: Auth
+  ) {}
 
   login() {
     if (!this.usuario || !this.password || !this.rol) {
@@ -21,7 +26,18 @@ export class LoginComponent {
       return;
     }
 
-    localStorage.setItem('rol', this.rol);
-    this.router.navigate(['/dashboard']);
+    this.authService.login(this.usuario, this.password, this.rol).subscribe({
+      next: (resp) => {
+        if (resp.success) {
+          this.authService.guardarSesion(resp);
+          this.router.navigate(['/dashboard']);
+        } else {
+          alert(resp.mensaje);
+        }
+      },
+      error: () => {
+        alert('Error al conectar con el backend');
+      }
+    });
   }
 }
