@@ -2,9 +2,9 @@
 
   <div class="page-header">
     <div>
-      <span class="badge bg-danger">Módulo gerencial</span>
+      <span class="badge bg-danger">Modulo gerencial</span>
       <h1>Reportes Empresariales</h1>
-      <p>Genere y revise reportes de caja, almacén, cuentas y movimientos.</p>
+      <p>Genere y revise reportes de caja, almacen, cuentas y movimientos.</p>
     </div>
 
     <a routerLink="/dashboard" class="btn btn-outline-danger">
@@ -26,7 +26,7 @@
       <div class="summary-card">
         <span>Generados</span>
         <h3>{{ generados }}</h3>
-        <p>Reportes listos para revisión</p>
+        <p>Reportes listos para revision</p>
       </div>
     </div>
 
@@ -56,9 +56,9 @@
     <div class="col-md-3">
       <div class="report-action-card">
         <div class="report-icon">📦</div>
-        <h2>Almacén</h2>
-        <p>Stock, productos críticos e inventario.</p>
-        <button class="btn btn-danger w-100" (click)="generarReporte('Almacén')">
+        <h2>Almacen</h2>
+        <p>Stock, productos criticos e inventario.</p>
+        <button class="btn btn-danger w-100" (click)="generarReporte('Almacen')">
           Generar
         </button>
       </div>
@@ -78,9 +78,9 @@
     <div class="col-md-3">
       <div class="report-action-card">
         <div class="report-icon">📋</div>
-        <h2>Guías</h2>
+        <h2>Guias</h2>
         <p>Compras, ventas y traslados registrados.</p>
-        <button class="btn btn-danger w-100" (click)="generarReporte('Guías')">
+        <button class="btn btn-danger w-100" (click)="generarReporte('Guias')">
           Generar
         </button>
       </div>
@@ -98,12 +98,12 @@
         </div>
 
         <div class="filters">
-          <select class="form-select" [(ngModel)]="filtroTipo" name="filtroTipo">
+          <select class="form-select" [(ngModel)]="filtroTipo" (ngModelChange)="onFiltroChange()" name="filtroTipo">
             <option value="">Todos</option>
             <option value="Caja">Caja</option>
-            <option value="Almacén">Almacén</option>
+            <option value="Almacen">Almacen</option>
             <option value="Cuentas">Cuentas</option>
-            <option value="Guías">Guías</option>
+            <option value="Guias">Guias</option>
           </select>
 
           <button class="btn btn-outline-danger" (click)="limpiarFiltro()">
@@ -116,7 +116,7 @@
         <table class="table align-middle">
           <thead>
             <tr>
-              <th>Código</th>
+              <th>Codigo</th>
               <th>Tipo</th>
               <th>Periodo</th>
               <th>Responsable</th>
@@ -154,8 +154,8 @@
       </div>
 
       <div class="logic-note">
-        <strong>Lógica del caso:</strong>
-        este módulo resume la información operativa de caja, almacén, cuentas y guías para apoyar la toma de decisiones del dueño o administrador.
+        <strong>Logica del caso:</strong>
+        este modulo resume la informacion operativa de caja, almacen, cuentas y guias para apoyar la toma de decisiones del dueno o administrador.
       </div>
 
     </div>

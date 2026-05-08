@@ -111,3 +111,9 @@ INSERT INTO usuario (usuario, password, rol) VALUES
 INSERT INTO movimiento_caja (tipo, cuenta, monto, fecha, motivo) VALUES
 ('Depósito', 'Caja Principal', 1200.00, '2026-05-02', 'Venta de productos'),
 ('Retiro', 'Cuenta Corriente', 350.00, '2026-05-02', 'Pago de proveedor');
+
+-- 
+INSERT INTO reportes (codigo, tipo, periodo, responsable, estado, fecha, fecha_creacion, total_ingresos, total_egresos, saldo_final, total_productos, productos_criticos, total_cuentas, saldo_total_cuentas, total_guias, contenido) VALUES
+('R001', 'Caja', 'Mayo 2026', 'Administrador', 'Generado', '2026-05-02', CURRENT_TIMESTAMP(), 1200.00, 350.00, 850.00, NULL, NULL, NULL, NULL, NULL, 'REPORTE DE CAJA\nPeríodo: Mayo 2026\nTotal Ingresos: $1200.00\nTotal Egresos: $350.00\nSaldo Final: $850.00\nTotal Movimientos: 2'),
+('R002', 'Almacén', 'Mayo 2026', 'Jefe de almacén', 'Pendiente', '2026-05-02', CURRENT_TIMESTAMP(), NULL, NULL, NULL, 100, 15, NULL, NULL, NULL, 'REPORTE DE ALMACÉN\nPeríodo: Mayo 2026\nTotal Productos: 100\nProductos con stock crítico (<10): 15'),
+('R003', 'Cuentas', 'Abril 2026', 'Dueño', 'Revisado', '2026-04-30', CURRENT_TIMESTAMP(), NULL, NULL, NULL, NULL, NULL, 2, 124500.00, NULL, 'REPORTE DE CUENTAS BANCARIAS\nPeríodo: Abril 2026\nTotal Cuentas: 2\nSaldo Total: $124500.00');
