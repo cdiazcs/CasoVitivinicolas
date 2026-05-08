@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="wineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#720026;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a3293d;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <path d="M50 10 L70 30 L70 70 L50 90 L30 70 L30 30 Z" fill="url(#wineGrad)" stroke="#c09a4a" stroke-width="2"/>
+  <circle cx="50" cy="50" r="15" fill="#c09a4a"/>
+  <path d="M40 50 Q50 40 60 50 Q50 60 40 50" fill="none" stroke="#fff" stroke-width="2"/>
+</svg>

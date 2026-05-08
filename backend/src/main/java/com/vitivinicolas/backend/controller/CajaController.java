@@ -27,6 +27,23 @@ public class CajaController {
         return movimientoCajaRepository.save(movimiento);
     }
 
+    @PutMapping("/{id}")
+    public MovimientoCaja actualizarMovimiento(
+            @PathVariable Long id,
+            @RequestBody MovimientoCaja movimientoActualizado
+    ) {
+        MovimientoCaja movimiento = movimientoCajaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Movimiento no encontrado"));
+
+        movimiento.setTipo(movimientoActualizado.getTipo());
+        movimiento.setCuenta(movimientoActualizado.getCuenta());
+        movimiento.setMonto(movimientoActualizado.getMonto());
+        movimiento.setFecha(movimientoActualizado.getFecha());
+        movimiento.setMotivo(movimientoActualizado.getMotivo());
+
+        return movimientoCajaRepository.save(movimiento);
+    }
+
     @DeleteMapping("/{id}")
     public void eliminarMovimiento(@PathVariable Long id) {
         movimientoCajaRepository.deleteById(id);

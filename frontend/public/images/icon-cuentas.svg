@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bankGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d3748;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4a5568;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="8" y="24" width="48" height="28" rx="4" fill="url(#bankGrad)"/>
+  <rect x="12" y="28" width="40" height="4" fill="#c09a4a"/>
+  <rect x="12" y="36" width="40" height="4" fill="#c09a4a"/>
+  <circle cx="20" cy="44" r="3" fill="#720026"/>
+  <circle cx="32" cy="44" r="3" fill="#720026"/>
+  <circle cx="44" cy="44" r="3" fill="#720026"/>
+</svg>
