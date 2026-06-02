@@ -12,49 +12,25 @@
     </div>
 
     <nav class="sidebar-menu">
-      <button class="sidebar-link active" type="button">
+
+      <button
+        class="sidebar-link active"
+        type="button"
+        (click)="irA('/dashboard')"
+      >
         🏠 <span>Dashboard</span>
       </button>
 
       <button
+        *ngFor="let modulo of modulosPorRol()"
         class="sidebar-link"
         type="button"
-        (click)="irA('/caja')"
+        (click)="irA(modulo.ruta)"
       >
-        💼 <span>Caja</span>
+        {{ modulo.icono }}
+        <span>{{ modulo.nombre }}</span>
       </button>
 
-      <button
-        class="sidebar-link"
-        type="button"
-        (click)="irA('/almacen')"
-      >
-        📦 <span>Almacén</span>
-      </button>
-
-      <button
-        class="sidebar-link"
-        type="button"
-        (click)="irA('/cuentas-bancarias')"
-      >
-        🏦 <span>Cuentas Bancarias</span>
-      </button>
-
-      <button
-        class="sidebar-link"
-        type="button"
-        (click)="irA('/guias-almacen')"
-      >
-        📋 <span>Guías de Almacén</span>
-      </button>
-
-      <button
-        class="sidebar-link"
-        type="button"
-        (click)="irA('/reportes')"
-      >
-        📊 <span>Reportes</span>
-      </button>
     </nav>
 
     <div class="sidebar-quote">
@@ -145,7 +121,7 @@
             </div>
 
             <div
-              *ngFor="let n of notificaciones()"
+              *ngFor="let n of notificaciones"
               class="notif-item"
               [class.unread]="!n.leida"
             >
@@ -173,8 +149,8 @@
           >
             <span class="avatar">AA</span>
             <span class="user-info">
-              <strong>Administrador</strong>
-              <small>admin</small>
+              <strong>{{ nombreRol }}</strong>
+              <small>{{ usuario }}</small>
             </span>
             ⌄
           </button>
@@ -224,7 +200,7 @@
         <!-- Mensaje de bienvenida y acceso rápido -->
         <div>
           <span class="badge-custom">Dashboard empresarial</span>
-          <h1>¡Bienvenido, Administrador! 🍇</h1>
+          <h1>¡Bienvenido, {{ nombreRol }}! 🍇</h1>
           <p>
             Controle caja, almacén, cuentas y reportes desde una interfaz centralizada,
             moderna y eficiente.

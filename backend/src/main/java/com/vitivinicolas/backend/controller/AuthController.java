@@ -1,7 +1,9 @@
+
 package com.vitivinicolas.backend.controller;
 
 import com.vitivinicolas.backend.model.Usuario;
 import com.vitivinicolas.backend.repository.UsuarioRepository;
+import com.vitivinicolas.backend.security.JwtService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -13,9 +15,11 @@ import java.util.Optional;
 public class AuthController {
 
     private final UsuarioRepository usuarioRepository;
+    private final JwtService jwtService;
 
-    public AuthController(UsuarioRepository usuarioRepository) {
+    public AuthController(UsuarioRepository usuarioRepository, JwtService jwtService) {
         this.usuarioRepository = usuarioRepository;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/login")
@@ -32,8 +36,14 @@ public class AuthController {
 
             Usuario usuario = usuarioEncontrado.get();
 
+            String token = jwtService.generarToken(
+                    usuario.getUsuario(),
+                    usuario.getRol()
+            );
+
             return Map.of(
                     "success", true,
+                    "token", token,
                     "usuario", usuario.getUsuario(),
                     "rol", usuario.getRol(),
                     "mensaje", "Login correcto"

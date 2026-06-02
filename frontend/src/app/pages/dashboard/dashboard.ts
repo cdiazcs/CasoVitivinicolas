@@ -9,6 +9,7 @@ interface Modulo {
   descripcion: string;
   icono: string;
   ruta: string;
+  roles: string[];
 }
 
 interface Notificacion {
@@ -22,13 +23,16 @@ interface Notificacion {
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss',
+  styleUrls: ['./dashboard.scss'],
 })
 export class Dashboard implements OnInit {
   searchTerm = signal('');
   mostrar = signal(true);
   selected = signal('');
   tema = signal<Tema>((localStorage.getItem('tema') as Tema) || 'light');
+
+  rolUsuario = localStorage.getItem('rol') || '';
+  usuario = localStorage.getItem('usuario') || '';
 
   themeMenuOpen = signal(false);
   notifMenuOpen = signal(false);
@@ -37,96 +41,95 @@ export class Dashboard implements OnInit {
   produccionActual = 842;
   metaProduccion = 1200;
 
+  notificaciones: Notificacion[] = [
+    { texto: 'Tienes una nueva orden pendiente', tiempo: 'Hace 10 min', leida: false },
+    { texto: 'El inventario de vino tinto está bajo', tiempo: 'Hace 1 h', leida: true },
+    { texto: 'Reporte mensual disponible', tiempo: 'Ayer', leida: false },
+  ];
+
+  get porcentajeProduccion(): number {
+    return Math.round((this.produccionActual / this.metaProduccion) * 100);
+  }
+
   modulos: Modulo[] = [
     {
       nombre: 'Caja',
       descripcion: 'Gestión de ingresos y egresos de caja.',
       icono: '💼',
       ruta: '/caja',
+      roles: ['dueno'],
     },
     {
       nombre: 'Almacén',
       descripcion: 'Control de inventario y productos.',
       icono: '📦',
       ruta: '/almacen',
+      roles: ['admin', 'dueno'],
     },
     {
       nombre: 'Cuentas Bancarias',
       descripcion: 'Administración de cuentas bancarias.',
       icono: '🏦',
       ruta: '/cuentas-bancarias',
+      roles: ['dueno'],
     },
     {
       nombre: 'Guías de Almacén',
       descripcion: 'Registro de movimientos de inventario.',
       icono: '📋',
       ruta: '/guias-almacen',
+      roles: ['admin', 'dueno'],
     },
     {
       nombre: 'Reportes',
       descripcion: 'Generación de reportes empresariales.',
       icono: '📊',
       ruta: '/reportes',
+      roles: ['admin', 'dueno'],
     },
   ];
-
-  notificaciones = signal<Notificacion[]>([
-    {
-      texto: 'Nuevo lote registrado en bodega N° 12',
-      tiempo: 'Hace 5 minutos',
-      leida: false,
-    },
-    {
-      texto: 'Venta #0842 requiere aprobación de caja',
-      tiempo: 'Hace 23 minutos',
-      leida: false,
-    },
-    {
-      texto: 'Stock bajo en insumos: Bentonita',
-      tiempo: 'Hace 1 hora',
-      leida: false,
-    },
-    {
-      texto: 'Cierre de caja del 01/05/2026 completado',
-      tiempo: 'Ayer',
-      leida: true,
-    },
-  ]);
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.aplicarTema(this.tema());
-
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', () => {
-        if (this.tema() === 'system') {
-          this.aplicarTema('system');
-        }
-      });
   }
 
-  get porcentajeProduccion(): number {
-    return Math.round((this.produccionActual / this.metaProduccion) * 100);
+  puedeVerModulo(modulo: Modulo): boolean {
+    return modulo.roles.includes(this.rolUsuario);
   }
 
-  updateSearch(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.searchTerm.set(input.value.trim().toLowerCase());
+  modulosPorRol(): Modulo[] {
+    return this.modulos.filter((modulo) => this.puedeVerModulo(modulo));
   }
 
   filteredModulos(): Modulo[] {
     const term = this.searchTerm();
 
-    if (!term) {
-      return this.modulos;
-    }
-
-    return this.modulos.filter((modulo) =>
+    return this.modulosPorRol().filter((modulo) =>
+      !term ||
       modulo.nombre.toLowerCase().includes(term) ||
       modulo.descripcion.toLowerCase().includes(term)
     );
+  }
+
+  esDueno(): boolean {
+    return this.rolUsuario === 'dueno';
+  }
+
+  esAdmin(): boolean {
+    return this.rolUsuario === 'admin';
+  }
+
+  get nombreRol(): string {
+    if (this.rolUsuario === 'dueno') return 'Dueño';
+    if (this.rolUsuario === 'admin') return 'Administrador';
+    return 'Usuario';
+  }
+
+  updateSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchTerm.set(input.value.trim().toLowerCase());
   }
 
   activarModulos(): void {
@@ -145,10 +148,15 @@ export class Dashboard implements OnInit {
     return this.selected();
   }
 
-  toggleThemeMenu(): void {
-    this.themeMenuOpen.set(!this.themeMenuOpen());
-    this.notifMenuOpen.set(false);
-    this.userMenuOpen.set(false);
+  irA(ruta: string): void {
+    this.router.navigate([ruta]);
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('rol');
+    this.router.navigate(['/login']);
   }
 
   cambiarTemaDirecto(tema: Tema): void {
@@ -166,18 +174,6 @@ export class Dashboard implements OnInit {
 
   aplicarTema(tema: Tema): void {
     document.body.classList.remove('theme-light', 'theme-dark', 'dark');
-
-    if (tema === 'system') {
-      const usarDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.body.classList.add(usarDark ? 'theme-dark' : 'theme-light');
-
-      if (usarDark) {
-        document.body.classList.add('dark');
-      }
-
-      return;
-    }
-
     document.body.classList.add(tema === 'dark' ? 'theme-dark' : 'theme-light');
 
     if (tema === 'dark') {
@@ -185,41 +181,13 @@ export class Dashboard implements OnInit {
     }
   }
 
-  toggleNotifMenu(): void {
-    this.notifMenuOpen.set(!this.notifMenuOpen());
-    this.themeMenuOpen.set(false);
-    this.userMenuOpen.set(false);
-  }
-
-  toggleUserMenu(): void {
-    this.userMenuOpen.set(!this.userMenuOpen());
-    this.themeMenuOpen.set(false);
-    this.notifMenuOpen.set(false);
+  toggleThemeMenu(): void {
+    this.themeMenuOpen.set(!this.themeMenuOpen());
   }
 
   notifNoLeidas(): number {
-    return this.notificaciones().filter((n) => !n.leida).length;
+    return 3;
   }
 
-  marcarTodasLeidas(): void {
-    this.notificaciones.update((notifs) =>
-      notifs.map((n) => ({
-        ...n,
-        leida: true,
-      }))
-    );
-  }
-
-  irA(ruta: string): void {
-    this.themeMenuOpen.set(false);
-    this.notifMenuOpen.set(false);
-    this.userMenuOpen.set(false);
-    this.router.navigate([ruta]);
-  }
-
-  logout(): void {
-    localStorage.removeItem('rol');
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
-  }
+  marcarTodasLeidas(): void {}
 }
