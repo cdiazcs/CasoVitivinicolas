@@ -1,3 +1,4 @@
+-- 1. INSERTAR PRODUCTOS VITIVINÍCOLAS
 INSERT INTO producto (codigo, nombre, categoria, ubicacion, stock) VALUES
 ('VIN-001', 'Malbec Gran Reserva', 'Tintos', 'Cava Principal', 45),
 ('VIN-002', 'Cabernet Sauvignon', 'Tintos', 'Cava Principal', 60),
@@ -100,20 +101,23 @@ INSERT INTO producto (codigo, nombre, categoria, ubicacion, stock) VALUES
 ('VIN-099', 'Anisado Dulce', 'Licores', 'Bodega Norte', 20),
 ('VIN-100', 'Mistela de Uva', 'Fortificados', 'Bodega Norte', 60);
 
+-- 2. INSERTAR CUENTAS BANCARIAS
 INSERT INTO cuenta_bancaria (nombre_banco, numero_cuenta, tipo_cuenta, saldo, moneda, fecha_apertura, titular) VALUES
 ('BCP', '001-456789123', 'CORRIENTE', 80000, 'CLP', '2024-01-15', 'Empresa Vitivinícola'),
 ('BBVA', '002-987654321', 'AHORRO', 44500, 'CLP', '2024-02-20', 'Empresa Vitivinícola');
 
+-- Cambiar temporalmente a texto plano para que el Login funcione ya
 INSERT INTO usuario (usuario, password, rol) VALUES
 ('admin', 'admin123', 'admin'),
 ('dueno', 'dueno123', 'dueno');
 
+-- 4. INSERTAR MOVIMIENTOS DE CAJA
 INSERT INTO movimiento_caja (tipo, cuenta, monto, fecha, motivo) VALUES
 ('Depósito', 'Caja Principal', 1200.00, '2026-05-02', 'Venta de productos'),
 ('Retiro', 'Cuenta Corriente', 350.00, '2026-05-02', 'Pago de proveedor');
 
--- 
+-- 5. INSERTAR REPORTES (Sintaxis limpia de saltos de línea para Postgres)
 INSERT INTO reportes (codigo, tipo, periodo, responsable, estado, fecha, fecha_creacion, total_ingresos, total_egresos, saldo_final, total_productos, productos_criticos, total_cuentas, saldo_total_cuentas, total_guias, contenido) VALUES
-('R001', 'Caja', 'Mayo 2026', 'Administrador', 'Generado', '2026-05-02', CURRENT_TIMESTAMP(), 1200.00, 350.00, 850.00, NULL, NULL, NULL, NULL, NULL, 'REPORTE DE CAJA\nPeríodo: Mayo 2026\nTotal Ingresos: $1200.00\nTotal Egresos: $350.00\nSaldo Final: $850.00\nTotal Movimientos: 2'),
-('R002', 'Almacén', 'Mayo 2026', 'Jefe de almacén', 'Pendiente', '2026-05-02', CURRENT_TIMESTAMP(), NULL, NULL, NULL, 100, 15, NULL, NULL, NULL, 'REPORTE DE ALMACÉN\nPeríodo: Mayo 2026\nTotal Productos: 100\nProductos con stock crítico (<10): 15'),
-('R003', 'Cuentas', 'Abril 2026', 'Dueño', 'Revisado', '2026-04-30', CURRENT_TIMESTAMP(), NULL, NULL, NULL, NULL, NULL, 2, 124500.00, NULL, 'REPORTE DE CUENTAS BANCARIAS\nPeríodo: Abril 2026\nTotal Cuentas: 2\nSaldo Total: $124500.00');
+('R001', 'Caja', 'Mayo 2026', 'Administrador', 'Generado', '2026-05-02', CURRENT_TIMESTAMP, 1200.00, 350.00, 850.00, NULL, NULL, NULL, NULL, NULL, 'REPORTE DE CAJA - Período: Mayo 2026 - Total Ingresos: $1200.00 - Total Egresos: $350.00 - Saldo Final: $850.00 - Total Movimientos: 2'),
+('R002', 'Almacén', 'Mayo 2026', 'Jefe de almacén', 'Pendiente', '2026-05-02', CURRENT_TIMESTAMP, NULL, NULL, NULL, 100, 15, NULL, NULL, NULL, 'REPORTE DE ALMACÉN - Período: Mayo 2026 - Total Productos: 100 - Productos con stock crítico (<10): 15'),
+('R003', 'Cuentas', 'Abril 2026', 'Dueño', 'Revisado', '2026-04-30', CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, 2, 124500.00, NULL, 'REPORTE DE CUENTAS BANCARIAS - Período: Abril 2026 - Total Cuentas: 2 - Saldo Total: $124500.00');
