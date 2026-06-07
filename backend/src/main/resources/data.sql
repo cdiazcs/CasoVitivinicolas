@@ -106,10 +106,10 @@ INSERT INTO cuenta_bancaria (nombre_banco, numero_cuenta, tipo_cuenta, saldo, mo
 ('BCP', '001-456789123', 'CORRIENTE', 80000, 'CLP', '2024-01-15', 'Empresa Vitivinícola'),
 ('BBVA', '002-987654321', 'AHORRO', 44500, 'CLP', '2024-02-20', 'Empresa Vitivinícola');
 
--- Cambiar temporalmente a texto plano para que el Login funcione ya
-INSERT INTO usuario (usuario, password, rol) VALUES
-('admin', 'admin123', 'admin'),
-('dueno', 'dueno123', 'dueno');
+-- 3. INSERTAR USUARIOS (Ya existen y están hasheados)
+-- INSERT INTO usuario (usuario, password, rol) VALUES
+-- ('admin', 'admin123', 'admin'),
+-- ('dueno', 'dueno123', 'dueno');
 
 -- 4. INSERTAR MOVIMIENTOS DE CAJA
 INSERT INTO movimiento_caja (tipo, cuenta, monto, fecha, motivo) VALUES
