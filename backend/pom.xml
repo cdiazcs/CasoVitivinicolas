@@ -24,13 +24,12 @@
 
     <dependencies>
 
-        <!---
-        Dependencia para la consola H2, útil para desarrollo y pruebas.
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-h2console</artifactId>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
-        -->
+        
 
         <dependency>
             <groupId>org.postgresql</groupId>
