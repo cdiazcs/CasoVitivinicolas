@@ -1,119 +1,111 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-interface GuiaAlmacen {
-  codigo: string;
-  tipo: string;
-  producto: string;
-  cantidad: number;
-  origen: string;
-  destino: string;
-  fecha: string;
-  estado: string;
-  observacion: string;
-}
+import { HttpClientModule } from '@angular/common/http';
+import { GuiasAlmacenService, GuiaAlmacenBackend } from './guias-almacen.service';
 
 @Component({
   selector: 'app-guias-almacen',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, HttpClientModule],
   templateUrl: './guias-almacen.html',
   styleUrl: './guias-almacen.scss',
+  providers: [GuiasAlmacenService]
 })
-export class GuiasAlmacen {
-  guia: GuiaAlmacen = {
-    codigo: '',
+export class GuiasAlmacen implements OnInit {
+  // Objeto enlazado al formulario de registro
+  formulario = {  
     tipo: '',
     producto: '',
     cantidad: 0,
     origen: '',
     destino: '',
-    fecha: '',
-    estado: 'Registrada',
     observacion: ''
   };
 
-  guias: GuiaAlmacen[] = [
-    {
-      codigo: 'G001',
-      tipo: 'Compra',
-      producto: 'Botella 750 ml',
-      cantidad: 200,
-      origen: 'Proveedor',
-      destino: 'Almacén Central',
-      fecha: '2026-05-02',
-      estado: 'Registrada',
-      observacion: 'Ingreso de envases'
-    },
-    {
-      codigo: 'G002',
-      tipo: 'Venta',
-      producto: 'Vino Tinto Reserva',
-      cantidad: 30,
-      origen: 'Bodega Norte',
-      destino: 'Cliente',
-      fecha: '2026-05-02',
-      estado: 'Despachada',
-      observacion: 'Salida por venta'
-    },
-    {
-      codigo: 'G003',
-      tipo: 'Traslado',
-      producto: 'Pisco Acholado',
-      cantidad: 50,
-      origen: 'Bodega Sur',
-      destino: 'Almacén Central',
-      fecha: '2026-05-02',
-      estado: 'Registrada',
-      observacion: 'Reubicación interna'
-    }
-  ];
+  // Lista dinámica vinculada a la base de datos
+  guias: GuiaAlmacenBackend[] = [];
 
-  get totalGuias() {
+  constructor(private guiasService: GuiasAlmacenService) {}
+
+  ngOnInit(): void {
+    this.cargarGuias();
+  }
+
+  cargarGuias(): void {
+    this.guiasService.listar().subscribe({
+      next: (data) => {
+        this.guias = data;
+      },
+      error: (err) => console.error('Error al recuperar guías desde el backend:', err)
+    });
+  }
+
+  // Contadores calculados reactivamente desde la base de datos
+  get totalGuias(): number {
     return this.guias.length;
   }
 
-  get totalCompras() {
-    return this.guias.filter(g => g.tipo === 'Compra').length;
+  get totalCompras(): number {
+    return this.guias.filter(g => g.tipoMovimiento === 'Compra' || g.tipoMovimiento === 'INGRESO').length;
   }
 
-  get totalVentas() {
-    return this.guias.filter(g => g.tipo === 'Venta').length;
+  get totalVentas(): number {
+    return this.guias.filter(g => g.tipoMovimiento === 'Venta' || g.tipoMovimiento === 'SALIDA').length;
   }
 
-  get totalTraslados() {
-    return this.guias.filter(g => g.tipo === 'Traslado').length;
+  get totalTraslados(): number {
+    return this.guias.filter(g => g.tipoMovimiento === 'Traslado').length;
   }
 
-  registrarGuia() {
-    if (!this.guia.tipo || !this.guia.producto || !this.guia.cantidad || !this.guia.fecha) {
-      alert('Complete los campos obligatorios');
+  registrarGuia(): void {
+    if (!this.formulario.tipo || !this.formulario.producto || !this.formulario.cantidad) {
+      alert('Por favor, complete los campos obligatorios.');
       return;
     }
 
-    const nuevoCodigo = 'G' + String(this.guias.length + 1).padStart(3, '0');
+    // Generar un correlativo para nroGuia (Ej: G-005)
+    const proximoCodigo = 'G-' + String(this.guias.length + 1).padStart(3, '0');
+    
+    // Mapear la estructura para emparejar los campos requeridos por el Backend
+    const nuevaGuia: GuiaAlmacenBackend = {
+      nroGuia: proximoCodigo,
+      tipoMovimiento: this.formulario.tipo,
+      encargado: 'Operador Almacén', // Dinámico o asignado por sesión
+      motivo: `Prod: ${this.formulario.producto} | Cant: ${this.formulario.cantidad} | De: ${this.formulario.origen || 'N/A'} a ${this.formulario.destino || 'N/A'} | Obs: ${this.formulario.observacion || 'Ninguna'}`
+    };
 
-    this.guias.unshift({
-      ...this.guia,
-      codigo: nuevoCodigo
+    this.guiasService.crear(nuevaGuia).subscribe({
+      next: () => {
+        this.cargarGuias(); // Refresca la tabla automáticamente
+        this.limpiarFormulario();
+      },
+      error: (err) => alert('Error al insertar el registro en la base de datos')
     });
+  }
 
-    this.guia = {
-      codigo: '',
+  eliminarGuia(id: number | undefined): void {
+    if (!id) return;
+    
+    if (confirm('¿Está seguro de que desea eliminar permanentemente esta guía del almacén?')) {
+      this.guiasService.eliminar(id).subscribe({
+        next: () => {
+          this.cargarGuias(); // Recarga la lista desde Postgres
+        },
+        error: (err) => console.error('Error al ejecutar el borrado:', err)
+      });
+    }
+  }
+
+  private limpiarFormulario(): void {
+    this.formulario = {
       tipo: '',
       producto: '',
       cantidad: 0,
       origen: '',
       destino: '',
-      fecha: '',
-      estado: 'Registrada',
       observacion: ''
     };
-  }
-
-  eliminarGuia(codigo: string) {
-    this.guias = this.guias.filter(g => g.codigo !== codigo);
   }
 }
