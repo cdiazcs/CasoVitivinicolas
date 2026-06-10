@@ -100,7 +100,7 @@ describe('GuiasAlmacen (Pruebas Unitarias)', () => {
     expect(alertSpy).toHaveBeenCalledWith('Error al procesar el movimiento en la base de datos.');
   });
 
-  // CASO CP-07 - BLINDADO CONTRA CORTES DE FLUJO
+  // CASO CP-07 
   it('CP-07: Debería habilitar campos y procesar el alta de un producto nuevo', async () => {
     // Aseguramos respuestas exitosas en cascada en toda la interfaz mock
     guiasServiceSpy.crear.and.returnValue(of({ id: 101, codigo: 'VIN-101' }));
