@@ -1,81 +1,135 @@
-<form (ngSubmit)="registrarGuia()">
-  <div class="mb-3">
-    <label class="form-label">Tipo de guía</label>
-    <select class="form-select" [(ngModel)]="formulario.tipo" name="tipo">
-      <option value="">Seleccione tipo</option>
-      <option value="Compra">Compra</option>
-      <option value="Venta">Venta</option>
-      <option value="Traslado">Traslado</option>
-    </select>
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="header-title">
+      <h1>Gestión de Guías de Almacén</h1>
+      <p>Control de movimientos de inventario y actualización automática de catálogo</p>
+    </div>
+  </header>
+
+  <div class="dashboard-grid">
+    <section class="form-card">
+      <div class="card-header">
+        <h2>Registrar Movimiento</h2>
+      </div>
+      
+      <form (ngSubmit)="registrarGuia()" class="modern-form">
+        <div class="form-group">
+          <label>Tipo de movimiento</label>
+          <select name="tipo" [(ngModel)]="formulario.tipo" required>
+            <option value="" disabled selected>Seleccione acción...</option>
+            <option value="Compra">Ingreso (Compra / Producción)</option>
+            <option value="Venta">Salida (Venta / Consumo)</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="formulario.tipo === 'Compra'">
+          <label>¿El producto ya existe en el catálogo?</label>
+          <div class="toggle-buttons">
+            <label class="radio-label">
+              <input type="radio" name="esNuevo" [value]="false" [(ngModel)]="esProductoNuevo"> Existente
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="esNuevo" [value]="true" [(ngModel)]="esProductoNuevo"> Es un Producto Nuevo ✨
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="!esProductoNuevo || formulario.tipo === 'Venta'">
+          <label>Seleccionar Producto</label>
+          <select name="producto" [(ngModel)]="formulario.producto" required>
+            <option value="" disabled selected>Seleccione el vino...</option>
+            <option *ngFor="let p of productos" [value]="p.nombre">
+              {{ p.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="dynamic-fields-box" *ngIf="esProductoNuevo && formulario.tipo === 'Compra'">
+          <p class="box-title">Datos del Nuevo Producto a Registrar</p>
+          
+          <div class="form-group mb-2">
+            <label>Nombre del Producto</label>
+            <input type="text" name="nuevoNombre" [(ngModel)]="formulario.producto" placeholder="Ej: Merlot Reserva 2026">
+          </div>
+
+          <div class="form-row mb-2">
+            <div class="form-group">
+              <label>Categoría</label>
+              <select name="nuevaCategoria" [(ngModel)]="formulario.categoria">
+                <option value="Vino Tinto">Vino Tinto</option>
+                <option value="Vino Blanco">Vino Blanco</option>
+                <option value="Pisco">Pisco</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Precio Ref.</label>
+              <input type="number" name="nuevoPrecio" [(ngModel)]="formulario.precio" placeholder="0.00">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Ubicación en Bodega</label>
+            <input type="text" name="nuevaUbicacion" [(ngModel)]="formulario.ubicacion" placeholder="Ej: Estante B-Z">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Cantidad de Unidades</label>
+          <input type="number" name="cantidad" [(ngModel)]="formulario.cantidad" min="1" placeholder="Ej: 100" required>
+        </div>
+
+        <div class="form-group">
+          <label>Observaciones / Nota</label>
+          <textarea name="observacion" [(ngModel)]="formulario.observacion" rows="2" placeholder="Nro de Factura, Transportista, etc."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <span>Procesar e Insertar</span>
+        </button>
+      </form>
+    </section>
+
+    <section class="table-card">
+      <div class="card-header">
+        <h2>Historial de Movimientos Recientes</h2>
+      </div>
+
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Nro. Guía</th>
+              <th>Tipo</th>
+              <th>Detalle / Historial</th>
+              <th>Cantidad</th>
+              <th class="text-center">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="guias.length === 0">
+              <td colspan="5" class="empty-state">No hay movimientos en la base de datos.</td>
+            </tr>
+            <tr *ngFor="let g of guias">
+              <td class="font-mono">{{ g.nroGuia }}</td>
+              <td>
+                <span class="badge" [ngClass]="g.tipoMovimiento === 'Compra' ? 'badge-success' : 'badge-danger'">
+                  {{ g.tipoMovimiento }}
+                </span>
+              </td>
+              <td>
+                <div class="movement-detail">
+                  <strong>{{ g.motivo }}</strong>
+                  <small>Encargado: {{ g.encargado }}</small>
+                </div>
+              </td>
+              <td class="font-bold">{{ g.encargado }} uds.</td>
+              <td class="text-center">
+                <button class="btn-delete" (click)="eliminarGuia(g.id)">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
-  
-  <div class="mb-3">
-    <label class="form-label">Producto</label>
-    <select class="form-select" [(ngModel)]="formulario.producto" name="producto">
-      <option value="">Seleccione producto</option>
-      <option value="Pisco Acholado">Pisco Acholado</option>
-      <option value="Vino Tinto Reserva">Vino Tinto Reserva</option>
-      <option value="Botella 750 ml">Botella 750 ml</option>
-      <option value="Corcho Premium">Corcho Premium</option>
-    </select>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Cantidad</label>
-    <input type="number" class="form-control" [(ngModel)]="formulario.cantidad" name="cantidad">
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Almacén origen</label>
-    <select class="form-select" [(ngModel)]="formulario.origen" name="origen">
-      <option value="">Seleccione origen</option>
-      <option value="Proveedor">Proveedor</option>
-      <option value="Almacén Central">Almacén Central</option>
-    </select>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Almacén destino</label>
-    <select class="form-select" [(ngModel)]="formulario.destino" name="destino">
-      <option value="">Seleccione destino</option>
-      <option value="Cliente">Cliente</option>
-      <option value="Almacén Central">Almacén Central</option>
-    </select>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Observación</label>
-    <input type="text" class="form-control" [(ngModel)]="formulario.observacion" name="observacion">
-  </div>
-
-  <button type="submit" class="btn btn-danger w-100">Registrar guía</button>
-</form>
-
-<tbody>
-  <tr *ngFor="let item of guias">
-    <td class="fw-bold">{{ item.nroGuia }}</td>
-    <td>
-      <span class="badge"
-        [class.bg-success]="item.tipoMovimiento === 'Compra' || item.tipoMovimiento === 'INGRESO'"
-        [class.bg-warning]="item.tipoMovimiento === 'Venta' || item.tipoMovimiento === 'SALIDA'"
-        [class.bg-info]="item.tipoMovimiento === 'Traslado'">
-        {{ item.tipoMovimiento }}
-      </span>
-    </td>
-    <td colspan="4" style="font-size: 0.85rem; max-width: 280px; word-break: break-word;">
-      {{ item.motivo }}
-    </td>
-    <td><span class="badge bg-secondary">Confirmado</span></td>
-    <td>
-      <button type="button" class="btn btn-sm btn-outline-danger" (click)="eliminarGuia(item.id)">
-        Eliminar
-      </button>
-    </td>
-  </tr>
-
-  <tr *ngIf="guias.length === 0">
-    <td colspan="8" class="text-center text-muted py-4">
-      No hay guías registradas en la base de datos.
-    </td>
-  </tr>
-</tbody>
+</div>

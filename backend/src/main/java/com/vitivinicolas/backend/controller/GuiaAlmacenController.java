@@ -10,36 +10,31 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/guias-almacen")
-@CrossOrigin(origins = "*") // Permite que tu Frontend se conecte sin bloqueos de CORS
+@CrossOrigin(origins = "http://localhost:4200") // Permite la comunicación con Angular sin errores de CORS
 public class GuiaAlmacenController {
 
     @Autowired
     private GuiaAlmacenService service;
 
-    // GET: http://localhost:8080/api/guias-almacen
     @GetMapping
-    public List<GuiaAlmacen> listar() {
+    public List<GuiaAlmacen> listarTodas() {
         return service.listarTodas();
     }
 
-    // POST (Insert): http://localhost:8080/api/guias-almacen
     @PostMapping
-    public ResponseEntity<GuiaAlmacen> crear(@RequestBody GuiaAlmacen guia) {
+    public ResponseEntity<GuiaAlmacen> guardar(@RequestBody GuiaAlmacen guia) {
         GuiaAlmacen nuevaGuia = service.guardar(guia);
         return ResponseEntity.ok(nuevaGuia);
     }
 
-    // PUT (Update): http://localhost:8080/api/guias-almacen/{id}
     @PutMapping("/{id}")
     public ResponseEntity<GuiaAlmacen> actualizar(@PathVariable Long id, @RequestBody GuiaAlmacen guia) {
-        GuiaAlmacen guiaActualizada = service.actualizar(id, guia);
-        return ResponseEntity.ok(guiaActualizada);
+        return ResponseEntity.ok(service.actualizar(id, guia));
     }
 
-    // DELETE: http://localhost:8080/api/guias-almacen/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
-        return ResponseEntity.ok("Guía eliminada correctamente");
+        return ResponseEntity.noContent().build();
     }
 }
