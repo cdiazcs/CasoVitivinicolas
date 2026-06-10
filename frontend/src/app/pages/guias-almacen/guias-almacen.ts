@@ -1,119 +1,145 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common'; // <-- Corregido el módulo que causaba error de compilación
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-interface GuiaAlmacen {
-  codigo: string;
-  tipo: string;
-  producto: string;
-  cantidad: number;
-  origen: string;
-  destino: string;
-  fecha: string;
-  estado: string;
-  observacion: string;
-}
+import { HttpClientModule } from '@angular/common/http';
+import { GuiasAlmacenService, GuiaAlmacenBackend } from './guias-almacen.service';
 
 @Component({
   selector: 'app-guias-almacen',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, HttpClientModule],
   templateUrl: './guias-almacen.html',
   styleUrl: './guias-almacen.scss',
+  providers: [GuiasAlmacenService]
 })
-export class GuiasAlmacen {
-  guia: GuiaAlmacen = {
-    codigo: '',
+export class GuiasAlmacen implements OnInit {
+  productos: any[] = []; 
+  guias: any[] = [];
+  esProductoNuevo: boolean = false; // Variable de control para el formulario dinámico
+
+  // Objeto unificado enlazado al formulario de la vista
+  formulario = {
     tipo: '',
-    producto: '',
+    producto: '', 
     cantidad: 0,
-    origen: '',
-    destino: '',
-    fecha: '',
-    estado: 'Registrada',
-    observacion: ''
+    origen: 'Almacén Central',
+    destino: 'Cava Principal',
+    observacion: '',
+    categoria: 'Tintos',
+    precio: 0,
+    ubicacion: 'Cava Principal'
   };
 
-  guias: GuiaAlmacen[] = [
-    {
-      codigo: 'G001',
-      tipo: 'Compra',
-      producto: 'Botella 750 ml',
-      cantidad: 200,
-      origen: 'Proveedor',
-      destino: 'Almacén Central',
-      fecha: '2026-05-02',
-      estado: 'Registrada',
-      observacion: 'Ingreso de envases'
-    },
-    {
-      codigo: 'G002',
-      tipo: 'Venta',
-      producto: 'Vino Tinto Reserva',
-      cantidad: 30,
-      origen: 'Bodega Norte',
-      destino: 'Cliente',
-      fecha: '2026-05-02',
-      estado: 'Despachada',
-      observacion: 'Salida por venta'
-    },
-    {
-      codigo: 'G003',
-      tipo: 'Traslado',
-      producto: 'Pisco Acholado',
-      cantidad: 50,
-      origen: 'Bodega Sur',
-      destino: 'Almacén Central',
-      fecha: '2026-05-02',
-      estado: 'Registrada',
-      observacion: 'Reubicación interna'
-    }
-  ];
+  constructor(private guiasService: GuiasAlmacenService) {}
 
-  get totalGuias() {
+  ngOnInit(): void {
+    this.cargarGuias();
+    this.cargarProductosReal();
+  }
+
+  cargarProductosReal(): void {
+    // Sincronizado exactamente con los nombres de la tabla public.producto en tu pgAdmin
+    this.productos = [
+      { nombre: 'Malbec Gran Reserva' },
+      { nombre: 'Cabernet Sauvignon' },
+      { nombre: 'Merlot Clasico' },
+      { nombre: 'Syrah Especial' },
+      { nombre: 'Carmenere Reserva' },
+      { nombre: 'Pinot Noir Suave' },
+      { nombre: 'Tannat Robusto' },
+      { nombre: 'Bonarda Joven' },
+      { nombre: 'Sangiovese Italiano' }
+    ];
+  }
+  
+  cargarGuias(): void {
+    this.guiasService.listar().subscribe({
+      next: (data) => {
+        this.guias = data;
+      },
+      error: (err) => console.error('Error al recuperar guías desde el backend:', err)
+    });
+  }
+
+  // Contadores calculados dinámicamente para los paneles del dashboard
+  get totalGuias(): number {
     return this.guias.length;
   }
 
-  get totalCompras() {
-    return this.guias.filter(g => g.tipo === 'Compra').length;
+  get totalCompras(): number {
+    return this.guias.filter(g => g.tipoMovimiento === 'Compra' || g.tipoMovimiento === 'INGRESO').length;
   }
 
-  get totalVentas() {
-    return this.guias.filter(g => g.tipo === 'Venta').length;
+  get totalVentas(): number {
+    return this.guias.filter(g => g.tipoMovimiento === 'Venta' || g.tipoMovimiento === 'SALIDA').length;
   }
 
-  get totalTraslados() {
-    return this.guias.filter(g => g.tipo === 'Traslado').length;
+  get totalTraslados(): number {
+    return this.guias.filter(g => g.tipoMovimiento === 'Traslado').length;
   }
 
-  registrarGuia() {
-    if (!this.guia.tipo || !this.guia.producto || !this.guia.cantidad || !this.guia.fecha) {
-      alert('Complete los campos obligatorios');
+  registrarGuia(): void {
+    if (!this.formulario.tipo || !this.formulario.producto || !this.formulario.cantidad) {
+      alert('Por favor, complete los campos obligatorios del formulario.');
       return;
     }
 
-    const nuevoCodigo = 'G' + String(this.guias.length + 1).padStart(3, '0');
+    // Generar un correlativo automático para la guía (Ej: G-001, G-002...)
+    const proximoCodigo = 'G-' + String(this.guias.length + 1).padStart(3, '0');
+    
+    // Construcción del motivo condicional según si el producto es nuevo o existente
+    let motivoConstruido = '';
+    if (this.esProductoNuevo && this.formulario.tipo === 'Compra') {
+      // Si es de estreno, empaqueta todos sus atributos para el INSERT del Backend
+      motivoConstruido = `Prod: ${this.formulario.producto} | Cat: ${this.formulario.categoria} | Precio: ${this.formulario.precio} | Ubic: ${this.formulario.ubicacion} | Obs: ${this.formulario.observacion || 'Registro inicial'}`;
+    } else {
+      // Si ya existe, envía la trama básica para el UPDATE de stock estándar
+      motivoConstruido = `Prod: ${this.formulario.producto} | Cant: ${this.formulario.cantidad} | De: ${this.formulario.origen} a ${this.formulario.destino} | Obs: ${this.formulario.observacion || 'Ninguna'}`;
+    }
+    
+    // Mapeo final del objeto que va hacia Spring Boot
+    const nuevaGuia: GuiaAlmacenBackend = {
+      nroGuia: proximoCodigo,
+      tipoMovimiento: this.formulario.tipo,
+      encargado: String(this.formulario.cantidad), // Guardamos la cantidad numérica aquí para su fácil extracción con Integer.parseInt()
+      motivo: motivoConstruido
+    };
 
-    this.guias.unshift({
-      ...this.guia,
-      codigo: nuevoCodigo
+    this.guiasService.crear(nuevaGuia).subscribe({
+      next: () => {
+        this.cargarGuias(); // Refresca instantáneamente el historial de la derecha
+        this.limpiarFormulario();
+        this.esProductoNuevo = false; // Resetea el interruptor visual
+      },
+      error: (err) => alert('Error al procesar el movimiento en la base de datos.')
     });
+  }
 
-    this.guia = {
-      codigo: '',
+  eliminarGuia(id: number | undefined): void {
+    if (!id) return;
+    
+    if (confirm('¿Está seguro de que desea eliminar permanentemente esta guía del almacén?')) {
+      this.guiasService.eliminar(id).subscribe({
+        next: () => {
+          this.cargarGuias(); // Recarga la cuadrícula desde Postgres
+        },
+        error: (err) => console.error('Error al ejecutar el borrado:', err)
+      });
+    }
+  }
+
+  private limpiarFormulario(): void {
+    this.formulario = {
       tipo: '',
       producto: '',
       cantidad: 0,
-      origen: '',
-      destino: '',
-      fecha: '',
-      estado: 'Registrada',
-      observacion: ''
+      origen: 'Almacén Central',
+      destino: 'Cava Principal',
+      observacion: '',
+      categoria: 'Tintos',
+      precio: 0,
+      ubicacion: 'Cava Principal'
     };
-  }
-
-  eliminarGuia(codigo: string) {
-    this.guias = this.guias.filter(g => g.codigo !== codigo);
   }
 }
