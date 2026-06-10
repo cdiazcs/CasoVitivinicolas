@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+// REVISAR: Tiene que decir "export interface" obligatoriamente
 export interface GuiaAlmacenBackend {
   id?: number;
   nroGuia: string;

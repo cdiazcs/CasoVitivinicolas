@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // <-- Corregido el módulo que causaba error de compilación
-import { RouterLink } from '@angular/router';
+//import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { GuiasAlmacenService, GuiaAlmacenBackend } from './guias-almacen.service';
@@ -8,7 +8,7 @@ import { GuiasAlmacenService, GuiaAlmacenBackend } from './guias-almacen.service
 @Component({
   selector: 'app-guias-almacen',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './guias-almacen.html',
   styleUrl: './guias-almacen.scss',
   providers: [GuiasAlmacenService]
