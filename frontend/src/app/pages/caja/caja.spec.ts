@@ -9,11 +9,12 @@ describe('CajaComponent', () => {
   let component: CajaComponent;
   let fixture: ComponentFixture<CajaComponent>;
 
+  // MODIFICACIÓN TÉCNICA: Cambiamos jasmine.createSpy por funciones mock universales () => of(...)
   const cajaServiceMock = {
-    listarMovimientos: jasmine.createSpy('listarMovimientos').and.returnValue(of([])),
-    registrarMovimiento: jasmine.createSpy('registrarMovimiento').and.returnValue(of({})),
-    actualizarMovimiento: jasmine.createSpy('actualizarMovimiento').and.returnValue(of({})),
-    eliminarMovimiento: jasmine.createSpy('eliminarMovimiento').and.returnValue(of(undefined)),
+    listarMovimientos: () => of([]),
+    registrarMovimiento: () => of({}),
+    actualizarMovimiento: () => of({}),
+    eliminarMovimiento: () => of(undefined),
   };
 
   beforeEach(async () => {

@@ -3,10 +3,5 @@
   "compilerOptions": {
     "types": ["jasmine"]
   },
-  "include": ["src/**/*.d.ts", "src/**/*.spec.ts"],
-  "exclude": [
-    "src/app/core/services/almacen.spec.ts",
-    "src/app/core/services/caja.spec.ts",
-    "src/app/pages/caja/caja.spec.ts"
-  ]
+  "include": ["src/**/*.d.ts", "src/**/*.spec.ts"]
 }
