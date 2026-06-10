@@ -1,16 +1,20 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { Almacen } from './almacen';
+import { AlmacenService } from './almacen';
 
-describe('Almacen', () => {
-  let service: Almacen;
+describe('AlmacenService', () => {
+  let service: AlmacenService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Almacen);
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule]
+    });
+
+    service = TestBed.inject(AlmacenService);
   });
 
-  it('should be created', () => {
+  it('debe crearse correctamente', () => {
     expect(service).toBeTruthy();
   });
 });
