@@ -21,6 +21,7 @@ public class AuthController {
     public AuthController(UsuarioRepository usuarioRepository, 
                           JwtService jwtService,
                           PasswordEncoder passwordEncoder) {
+        // Constructor simple para inyección de dependencias.
         this.usuarioRepository = usuarioRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
@@ -28,7 +29,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public Object login(@RequestBody Usuario datosLogin) {
-
+        // Método de autenticación que recibe las credenciales del usuario.
         System.out.println("=== LOGIN INTENTADO ===");
         System.out.println("Usuario: " + datosLogin.getUsuario());
         System.out.println("Rol: " + datosLogin.getRol());
