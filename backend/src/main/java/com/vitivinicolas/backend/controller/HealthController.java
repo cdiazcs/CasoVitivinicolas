@@ -8,6 +8,11 @@ import java.util.Map;
 @RestController
 public class HealthController {
 
+    @GetMapping("/")
+    public String home() {
+        return "Backend Vitivinícolas desplegado correctamente";
+    }
+
     @GetMapping("/api/health")
     public Map<String, String> health() {
         return Map.of(
