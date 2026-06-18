@@ -8,18 +8,18 @@ import { Observable } from 'rxjs';
 })
 export class Auth {
 
-  private apiUrl = 'https://casovitivinicolas.onrender.com';
+private apiUrl = 'https://casovitivinicolas.onrender.com';
 
-  constructor(private http: HttpClient) {}
+constructor(private http: HttpClient) {}
 
-  // Envía las credenciales al backend para iniciar sesión.
-  login(usuario: string, password: string, rol: string): Observable<any> {
-    return this.http.post<any>(this.apiUrl, {
-      usuario,
-      password,
-      rol
-    });
-  }
+// Envía las credenciales al backend para iniciar sesión.
+login(usuario: string, password: string, rol: string): Observable<any> {
+  return this.http.post<any>(`${this.apiUrl}/auth/login`, {
+    usuario,
+    password,
+    rol
+  });
+}
 
   // Guarda los datos de sesión en localStorage.
   guardarSesion(data: any): void {
