@@ -6,8 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AlmacenService {
 
-  private apiUrl = 'http://localhost:8080/productos';
-
+private apiUrl = 'https://casovitivinicolas.onrender.com/productos';
   constructor(private http: HttpClient) {}
 
   filtrarStock(marca: string, ubicacion: string) {

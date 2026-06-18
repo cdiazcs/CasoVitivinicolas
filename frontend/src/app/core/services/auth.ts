@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class Auth {
 
-  private apiUrl = 'http://localhost:8080/auth/login';
+  private apiUrl = 'https://casovitivinicolas.onrender.com';
 
   constructor(private http: HttpClient) {}
 

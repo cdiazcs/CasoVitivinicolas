@@ -16,7 +16,7 @@ export interface MovimientoCaja {
 })
 export class CajaService {
 
-  private apiUrl = 'http://localhost:8080/caja';
+  private apiUrl = 'https://casovitivinicolas.onrender.com/caja';
 
   constructor(private http: HttpClient) {}
 

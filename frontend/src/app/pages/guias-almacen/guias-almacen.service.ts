@@ -16,7 +16,7 @@ export interface GuiaAlmacenBackend {
   providedIn: 'root'
 })
 export class GuiasAlmacenService {
-  private apiUrl = 'http://localhost:8080/api/guias-almacen';
+ private apiUrl = 'https://casovitivinicolas.onrender.com/api/guias-almacen';
 
   constructor(private http: HttpClient) {}
 

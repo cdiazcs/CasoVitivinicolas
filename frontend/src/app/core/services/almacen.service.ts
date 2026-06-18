@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AlmacenService {
 
-  private apiUrl = 'http://localhost:8080/productos';
+ private apiUrl = 'https://casovitivinicolas.onrender.com/productos';
 
   constructor(private http: HttpClient) {}
 
@@ -22,7 +22,7 @@ export class AlmacenService {
   filtrarStock(nombre: string, categoria: string, ubicacion: string): Observable<any> {
     // Construimos los parámetros de forma limpia
     let params = new HttpParams();
-    
+
     if (nombre) params = params.set('nombre', nombre);
     if (categoria) params = params.set('categoria', categoria);
     if (ubicacion) params = params.set('ubicacion', ubicacion);

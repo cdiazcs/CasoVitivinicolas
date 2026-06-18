@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class CuentasBancariasService {
 
-  private apiUrl = 'http://localhost:8080/cuentas-bancarias';
+ private apiUrl = 'https://casovitivinicolas.onrender.com/cuentas-bancarias';
 
   constructor(private http: HttpClient) {}
 
